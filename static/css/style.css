@@ -1,0 +1,851 @@
+/* ============================================================
+   style.css - Blood Donor Finder
+   All styling for the website goes here.
+
+   HOW CSS WORKS (for beginners):
+   - We select an HTML element by its class (.class-name)
+   - Then write rules inside { } to style it
+   - Example: .navbar { background: red; }
+
+   SECTIONS IN THIS FILE:
+   1. Color variables (easy to change theme colors)
+   2. Basic reset (remove default browser styles)
+   3. Navigation bar
+   4. Hero section (big banner)
+   5. Flash messages
+   6. Search section
+   7. Form elements (input, select, button)
+   8. Buttons
+   9. Donor result cards
+   10. Admin page
+   11. Footer
+   12. Toast popup (JavaScript notification)
+   13. Mobile friendly (smaller screens)
+   ============================================================ */
+
+
+/* ============================================================
+   1. COLOR VARIABLES
+   We define colors here once and reuse them everywhere.
+   To change the theme, just edit these values!
+   ============================================================ */
+:root {
+  --red:         #D4000A;   /* Main red color */
+  --red-dark:    #A80008;   /* Darker red for hover effects */
+  --red-light:   #FFF0F0;   /* Very light red background */
+
+  --black:       #0E0E0E;   /* Near-black for text */
+  --dark-gray:   #3D3D3D;   /* Dark gray */
+  --medium-gray: #9E9E9E;   /* Medium gray */
+  --light-gray:  #E8E8E8;   /* Light gray for borders */
+  --off-white:   #F5F5F5;   /* Light background */
+  --white:       #FFFFFF;   /* Pure white */
+
+  --font-title:  'Bebas Neue', sans-serif;  /* Big bold font */
+  --font-body:   'DM Sans', sans-serif;     /* Normal text font */
+
+  --border-radius: 10px;    /* Rounded corners amount */
+}
+
+
+/* ============================================================
+   2. BASIC RESET
+   Remove default browser styles so everything looks the same
+   ============================================================ */
+* {
+  box-sizing: border-box;   /* Include padding in width calculations */
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;  /* Smooth scrolling */
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--white);
+  color: var(--black);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;   /* Stack sections vertically */
+}
+
+a {
+  color: inherit;           /* Links use parent color */
+  text-decoration: none;    /* Remove underline from links */
+}
+
+
+/* ============================================================
+   3. NAVIGATION BAR
+   The top bar with logo and links
+   ============================================================ */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;   /* Logo on left, links on right */
+  padding: 1rem 4%;
+  border-bottom: 2px solid var(--black);
+  background-color: var(--white);
+  position: sticky;   /* Stays at top when scrolling */
+  top: 0;
+  z-index: 100;       /* Appears above other content */
+}
+
+.site-logo {
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  color: var(--red);
+  letter-spacing: 0.04em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;          /* Space between links */
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--dark-gray);
+  transition: color 0.2s;   /* Smooth color change on hover */
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--red);
+}
+
+
+/* ============================================================
+   4. HERO SECTION
+   The big black banner at the top of home page
+   ============================================================ */
+.hero-section {
+  position: relative;
+  overflow: hidden;     /* Hide anything going outside the box */
+  padding: 5rem 4% 4rem;
+  background-color: var(--black);
+  color: var(--white);
+}
+
+/* The huge faded "BLOOD" text in the background */
+.hero-big-text {
+  position: absolute;
+  top: 50%;
+  right: -2%;
+  transform: translateY(-50%);
+  font-family: var(--font-title);
+  font-size: clamp(8rem, 20vw, 22rem);  /* Responsive font size */
+  color: rgba(255, 255, 255, 0.04);     /* Very transparent */
+  pointer-events: none;                 /* Can't click on it */
+  user-select: none;                    /* Can't select the text */
+}
+
+.hero-words {
+  position: relative;
+  z-index: 1;           /* Appears above the big faded text */
+  max-width: 640px;
+}
+
+.hero-small-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--red);
+  margin-bottom: 0.6rem;
+}
+
+.hero-title {
+  font-family: var(--font-title);
+  font-size: clamp(3.5rem, 9vw, 7rem);   /* Big title, adjusts with screen */
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
+}
+
+.red-text {
+  color: var(--red);
+}
+
+.hero-description {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 400px;
+}
+
+
+/* ============================================================
+   5. FLASH MESSAGES
+   Green = success, Red = error
+   ============================================================ */
+.message-box {
+  padding: 0.6rem 4%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.message {
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: slide-in 0.3s ease;
+}
+
+/* Green for success */
+.message-success {
+  background-color: #E8F8EC;
+  color: #1B6B31;
+  border-left: 4px solid #2D9D52;
+}
+
+/* Red for error */
+.message-error {
+  background-color: #FEE8E8;
+  color: #9B1B1B;
+  border-left: 4px solid var(--red);
+}
+
+/* Slide in animation */
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ============================================================
+   6. SEARCH SECTION
+   The white search form box
+   ============================================================ */
+.search-section {
+  padding: 3rem 4%;
+  background-color: var(--off-white);
+  border-bottom: 2px solid var(--light-gray);
+}
+
+.search-box {
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  border-radius: var(--border-radius);
+  padding: 2.4rem;
+  max-width: 760px;
+  margin: 0 auto;                       /* Center the form */
+  box-shadow: 6px 6px 0 var(--black);  /* Bold shadow effect */
+}
+
+.search-heading {
+  font-family: var(--font-title);
+  font-size: 2rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.3rem;
+}
+
+.search-subtext {
+  color: var(--medium-gray);
+  font-size: 0.9rem;
+  margin-bottom: 1.8rem;
+}
+
+
+/* ============================================================
+   7. FORM ELEMENTS (inputs, selects, labels)
+   ============================================================ */
+
+/* Two side-by-side columns layout */
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* Two equal columns */
+  gap: 1.2rem;
+}
+
+/* Wraps label + input together */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.2rem;
+}
+
+label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--dark-gray);
+}
+
+/* Style for text inputs and dropdowns */
+input[type="text"],
+input[type="tel"],
+select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--light-gray);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--black);
+  background-color: var(--white);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+/* Highlight when user clicks on input */
+input:focus,
+select:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(212, 0, 10, 0.12);
+}
+
+
+/* ============================================================
+   8. BUTTONS
+   We have 3 button styles: red, outline, white
+   ============================================================ */
+
+/* Base button style */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 2rem;
+  border: 2px solid var(--black);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+/* Red filled button */
+.btn-red {
+  background-color: var(--red);
+  color: var(--white);
+  border-color: var(--red-dark);
+  box-shadow: 4px 4px 0 var(--red-dark);
+}
+.btn-red:hover {
+  transform: translate(-2px, -2px);   /* Move slightly on hover */
+  box-shadow: 6px 6px 0 var(--red-dark);
+}
+
+/* Outline button (transparent) */
+.btn-outline {
+  background-color: transparent;
+  color: var(--black);
+  box-shadow: 4px 4px 0 var(--black);
+}
+.btn-outline:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--black);
+}
+
+/* White button (used on red background) */
+.btn-white {
+  background-color: var(--white);
+  color: var(--red);
+  border-color: var(--white);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+.btn-white:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Makes button take full width of its container */
+.btn-full-width {
+  width: 100%;
+}
+
+
+/* ============================================================
+   9. DONOR CARDS (search results)
+   ============================================================ */
+.results-section {
+  padding: 3rem 4%;
+  flex: 1;
+}
+
+.results-heading {
+  margin-bottom: 1.8rem;
+}
+.results-heading h2 {
+  font-family: var(--font-title);
+  font-size: 2rem;
+  letter-spacing: 0.04em;
+}
+.results-heading p {
+  color: var(--dark-gray);
+}
+
+/* Grid layout for donor cards */
+.donor-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+}
+
+/* Single donor card */
+.donor-card {
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  border-radius: var(--border-radius);
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  box-shadow: 4px 4px 0 var(--black);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.donor-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--black);
+}
+
+/* Red blood group badge (like A+, B-, O+) */
+.blood-group-badge {
+  display: inline-block;
+  background-color: var(--red);
+  color: var(--white);
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  padding: 0.2rem 0.8rem;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.donor-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.donor-city {
+  font-size: 0.9rem;
+  color: var(--dark-gray);
+}
+
+.donor-phone {
+  font-size: 0.9rem;
+  color: var(--red);
+  font-weight: 500;
+}
+.donor-phone:hover {
+  opacity: 0.75;
+}
+
+.available-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #2D9D52;     /* Green color */
+  margin-top: auto;   /* Push to bottom of card */
+}
+
+/* "No donors found" box */
+.no-donors-box {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+.big-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.no-donors-box h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+.no-donors-box p {
+  color: var(--dark-gray);
+  margin-bottom: 1.5rem;
+}
+
+/* Error message box */
+.error-box {
+  background-color: #FEE8E8;
+  border: 2px solid var(--red);
+  border-radius: var(--border-radius);
+  padding: 1rem 1.4rem;
+  color: var(--red-dark);
+  font-weight: 500;
+  max-width: 500px;
+}
+
+
+/* ============================================================
+   CTA STRIP (Call to Action)
+   Red banner encouraging people to register
+   ============================================================ */
+.cta-strip {
+  background-color: var(--red);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 3rem 4%;
+  margin-top: auto;
+}
+
+.cta-words h2 {
+  font-family: var(--font-title);
+  font-size: 2.2rem;
+  letter-spacing: 0.04em;
+}
+.cta-words p {
+  opacity: 0.8;
+}
+
+
+/* ============================================================
+   REGISTER PAGE LAYOUT
+   Split screen: left panel + right form panel
+   ============================================================ */
+.register-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* Two equal columns */
+  min-height: calc(100vh - 72px);
+}
+
+/* Left dark panel */
+.register-left-panel {
+  background-color: var(--black);
+  color: var(--white);
+  padding: 4rem 4%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+/* Big faded "GIVE" text in background */
+.left-bg-text {
+  position: absolute;
+  bottom: -5%;
+  left: -4%;
+  font-family: var(--font-title);
+  font-size: clamp(8rem, 18vw, 18rem);
+  color: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  user-select: none;
+}
+
+.left-content {
+  position: relative;
+  z-index: 1;
+}
+
+.left-content h1 {
+  font-family: var(--font-title);
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 0.95;
+  margin-bottom: 2rem;
+}
+
+/* List of donation facts */
+.donation-facts {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.donation-facts li {
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* Right white panel */
+.register-right-panel {
+  padding: 3rem 4%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--off-white);
+}
+
+/* The form card */
+.register-form-box {
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  border-radius: var(--border-radius);
+  padding: 2.4rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 6px 6px 0 var(--black);
+}
+
+.register-form-box h2 {
+  font-family: var(--font-title);
+  font-size: 2rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+
+.form-description {
+  font-size: 0.85rem;
+  color: var(--medium-gray);
+  margin-bottom: 1.8rem;
+}
+
+
+/* ============================================================
+   10. ADMIN PAGE
+   Dashboard with stats and donor table
+   ============================================================ */
+.admin-page {
+  padding: 2rem 4%;
+  flex: 1;
+}
+
+.admin-heading {
+  margin-bottom: 2rem;
+}
+.admin-heading h1 {
+  font-family: var(--font-title);
+  font-size: 2.8rem;
+  letter-spacing: 0.04em;
+}
+.admin-heading p {
+  color: var(--medium-gray);
+}
+
+/* Stats number cards */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  border-radius: var(--border-radius);
+  padding: 1.4rem;
+  box-shadow: 4px 4px 0 var(--black);
+  text-align: center;
+}
+
+/* Red stat card (available count) */
+.stat-card-red {
+  background-color: var(--red);
+  color: var(--white);
+  border-color: var(--red-dark);
+  box-shadow: 4px 4px 0 var(--red-dark);
+}
+
+.stat-number {
+  font-family: var(--font-title);
+  font-size: 3rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.stat-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+  margin-top: 0.3rem;
+}
+
+/* Blood group breakdown */
+.breakdown-section {
+  margin-bottom: 2.5rem;
+}
+
+.section-heading {
+  font-family: var(--font-title);
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 1rem;
+}
+
+.breakdown-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--white);
+  border: 2px solid var(--light-gray);
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+}
+
+.breakdown-count {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Donors table */
+.table-section {
+  margin-bottom: 3rem;
+}
+
+.table-scroll {
+  overflow-x: auto;   /* Horizontal scroll on small screens */
+}
+
+.donors-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+/* Table header */
+.donors-table thead {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+.donors-table th {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+
+/* Table rows */
+.donors-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.donors-table tbody tr:hover {
+  background-color: var(--off-white);
+}
+
+/* Faded row when donor is unavailable */
+.donors-table tbody tr.faded-row {
+  opacity: 0.5;
+}
+
+.id-column {
+  color: var(--medium-gray);
+  font-size: 0.8rem;
+}
+
+.name-column {
+  font-weight: 500;
+}
+
+/* Status labels */
+.status-label {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Green = available */
+.status-green {
+  background-color: #E8F8EC;
+  color: #1B6B31;
+}
+
+/* Gray = unavailable */
+.status-gray {
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
+}
+
+/* Toggle button in table */
+.toggle-btn {
+  background-color: transparent;
+  border: 1.5px solid var(--light-gray);
+  border-radius: 5px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+.toggle-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+
+/* ============================================================
+   11. FOOTER
+   ============================================================ */
+.page-footer {
+  text-align: center;
+  padding: 1.5rem 4%;
+  border-top: 2px solid var(--light-gray);
+  font-size: 0.8rem;
+  color: var(--medium-gray);
+}
+
+
+/* ============================================================
+   12. TOAST POPUP
+   Small notification popup at bottom-right corner.
+   Created by JavaScript in ui.js
+   ============================================================ */
+.toast-popup {
+  position: fixed;          /* Stays in corner while scrolling */
+  bottom: 2rem;
+  right: 2rem;
+  background-color: var(--black);
+  color: var(--white);
+  padding: 0.9rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+  z-index: 999;             /* Appears above everything */
+  animation: toast-appear 0.3s ease;
+  border-left: 4px solid var(--red);
+}
+
+@keyframes toast-appear {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ============================================================
+   13. MOBILE FRIENDLY
+   On small screens (phones/tablets), adjust the layout
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Stack two columns into one on mobile */
+  .two-columns {
+    grid-template-columns: 1fr;
+  }
+
+  /* Hide left panel on register page (screen too small) */
+  .register-page {
+    grid-template-columns: 1fr;
+  }
+  .register-left-panel {
+    display: none;
+  }
+
+  /* Stack CTA strip vertically */
+  .cta-strip {
+    flex-direction: column;
+    text-align: center;
+  }
+}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloodConnect - Find Blood Donors</title>
+
+  <!-- Our main CSS file -->
+  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+  <link rel="stylesheet" href="static/css/style.css">
+  <!-- Google Fonts for nice looking text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ================================================
+       NAVIGATION BAR
+       Shows at the top of every page
+       ================================================ -->
+  <nav class="navbar">
+    <a href="/" class="site-logo">🩸 BloodConnect</a>
+
+    <div class="nav-links">
+      <a href="/" class="nav-link active">Search</a>
+      <a href="/register" class="nav-link">Become a Donor</a>
+      <a href="/admin" class="nav-link">Admin</a>
+    </div>
+  </nav>
+
+
+  <!-- ================================================
+       HERO SECTION
+       Big banner at the top of the home page
+       ================================================ -->
+  <header class="hero-section">
+    <div class="hero-big-text">BLOOD</div>
+    <div class="hero-words">
+      <p class="hero-small-text">Save a Life Today</p>
+      <h1 class="hero-title">Find Blood<br><span class="red-text">Donors</span></h1>
+      <p class="hero-description">Search compatible donors in your city — instantly.</p>
+    </div>
+  </header>
+
+
+  <!-- ================================================
+       FLASH MESSAGES
+       These are success/error messages shown after actions.
+       Flask sends them using flash() in app.py
+       ================================================ -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="message-box">
+        {% for category, message in messages %}
+          <div class="message message-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+
+  <!-- ================================================
+       SEARCH FORM SECTION
+       User picks blood group and types city name
+       Form uses GET method → search values go in URL
+       Example: /?group=A+&city=Chennai
+       ================================================ -->
+  <section class="search-section">
+    <form class="search-box" method="GET" action="/">
+
+      <h2 class="search-heading">Who needs blood?</h2>
+      <p class="search-subtext">Enter the patient's blood group and city to find donors.</p>
+
+      <!-- Two fields side by side -->
+      <div class="two-columns">
+
+        <!-- Blood Group Dropdown -->
+        <div class="input-group">
+          <label for="group">Blood Group Needed</label>
+          <select id="group" name="group" required>
+            <option value="" disabled {% if not search_group %}selected{% endif %}>
+              Select blood group
+            </option>
+
+            <!-- Loop through all blood groups from Python -->
+            {% for bg in blood_groups %}
+              <option value="{{ bg }}"
+                {% if bg == search_group %}selected{% endif %}>
+                {{ bg }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- City Input -->
+        <div class="input-group">
+          <label for="city">City</label>
+          <input
+            type="text"
+            id="city"
+            name="city"
+            placeholder="e.g. Chennai, Mumbai..."
+            value="{{ search_city }}"
+            required
+          >
+        </div>
+
+      </div><!-- end two-columns -->
+
+      <!-- Search Button -->
+      <button type="submit" class="btn btn-red">
+        Search Donors 🔍
+      </button>
+
+    </form>
+  </section>
+
+
+  <!-- ================================================
+       SEARCH RESULTS SECTION
+       Only shown AFTER the user has searched.
+       search_done is set to True in app.py when user searched.
+       ================================================ -->
+  {% if search_done %}
+  <section class="results-section">
+
+    <!-- Case 1: There was an error (invalid blood group, etc.) -->
+    {% if error_message %}
+      <div class="error-box">{{ error_message }}</div>
+
+    <!-- Case 2: Donors were found! -->
+    {% elif donors %}
+      <div class="results-heading">
+        <h2>{{ donors|length }} donor{{ 's' if donors|length != 1 }} found</h2>
+        <p>
+          Compatible with <strong>{{ search_group }}</strong>
+          in <strong>{{ search_city|title }}</strong>
+        </p>
+      </div>
+
+      <!-- Grid of donor cards -->
+      <div class="donor-cards-grid">
+        {% for donor in donors %}
+        <div class="donor-card">
+
+          <!-- Blood group badge (red label) -->
+          <div class="blood-group-badge">{{ donor.blood_group }}</div>
+
+          <!-- Donor details -->
+          <div class="donor-details">
+            <h3 class="donor-name">{{ donor.name }}</h3>
+            <p class="donor-city">📍 {{ donor.city }}</p>
+            <a class="donor-phone" href="tel:{{ donor.phone }}">📞 {{ donor.phone }}</a>
+          </div>
+
+          <div class="available-label">✅ Available</div>
+        </div>
+        {% endfor %}
+      </div>
+
+    <!-- Case 3: No donors found -->
+    {% else %}
+      <div class="no-donors-box">
+        <div class="big-icon">🔍</div>
+        <h3>No donors found</h3>
+        <p>
+          No available donors for <strong>{{ search_group }}</strong>
+          in <strong>{{ search_city|title }}</strong>.
+        </p>
+        <a href="/register" class="btn btn-outline">Register as a Donor</a>
+      </div>
+    {% endif %}
+
+  </section>
+  {% endif %}
+
+
+  <!-- ================================================
+       CALL TO ACTION STRIP
+       Encourages visitors to register as donors
+       ================================================ -->
+  <section class="cta-strip">
+    <div class="cta-words">
+      <h2>Are you a blood donor?</h2>
+      <p>Join thousands of heroes who save lives every day.</p>
+    </div>
+    <a href="/register" class="btn btn-white">Register Now →</a>
+  </section>
+
+
+  <!-- ================================================
+       FOOTER
+       Bottom of the page
+       ================================================ -->
+  <footer class="page-footer">
+    <p>BloodConnect © 2024 — Student Project | Built with Flask + MySQL</p>
+  </footer>
+
+  <!-- Our JavaScript file (only for small UI effects) -->
+  <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+
+</body>
+</html>

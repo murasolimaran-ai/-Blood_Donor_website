@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - BloodConnect</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ================================================
+       NAVIGATION BAR
+       ================================================ -->
+  <nav class="navbar">
+    <a href="/" class="site-logo">🩸 BloodConnect</a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Search</a>
+      <a href="/register" class="nav-link">Become a Donor</a>
+      <a href="/admin" class="nav-link active">Admin</a>
+    </div>
+  </nav>
+
+
+  <!-- ================================================
+       ADMIN MAIN CONTENT
+       ================================================ -->
+  <main class="admin-page">
+
+    <div class="admin-heading">
+      <h1>Admin Dashboard</h1>
+      <p>Manage all registered blood donors</p>
+    </div>
+
+
+    <!-- ============================================
+         STATS CARDS ROW
+         Shows 4 number cards at the top
+         stats comes from get_dashboard_stats() in model.py
+         ============================================ -->
+    <div class="stats-row">
+
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total }}</div>
+        <div class="stat-name">Total Donors</div>
+      </div>
+
+      <div class="stat-card stat-card-red">
+        <div class="stat-number">{{ stats.available }}</div>
+        <div class="stat-name">Available Now</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.unavailable }}</div>
+        <div class="stat-name">Unavailable</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.top_cities|length }}</div>
+        <div class="stat-name">Cities Covered</div>
+      </div>
+
+    </div><!-- end stats-row -->
+
+
+    <!-- ============================================
+         BLOOD GROUP BREAKDOWN
+         Shows count of donors per blood group
+         ============================================ -->
+    {% if stats.count_by_group %}
+    <div class="breakdown-section">
+      <h2 class="section-heading">Donors by Blood Group</h2>
+
+      <div class="breakdown-list">
+        {% for group, count in stats.count_by_group.items() %}
+        <div class="breakdown-item">
+          <span class="blood-group-badge">{{ group }}</span>
+          <span class="breakdown-count">{{ count }} donors</span>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+    {% endif %}
+
+
+    <!-- ============================================
+         DONORS TABLE
+         Shows every donor with action buttons
+         ============================================ -->
+    <div class="table-section">
+      <h2 class="section-heading">All Donors ({{ donors|length }})</h2>
+
+      {% if donors %}
+      <!-- Scrollable wrapper so table works on small screens -->
+      <div class="table-scroll">
+        <table class="donors-table">
+
+          <!-- Table header row -->
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Blood Group</th>
+              <th>City</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <!-- Table body: one row per donor -->
+          <tbody>
+            {% for donor in donors %}
+            <tr id="row-{{ donor.id }}"
+                class="{% if not donor.available %}faded-row{% endif %}">
+
+              <td class="id-column">{{ donor.id }}</td>
+              <td class="name-column">{{ donor.name }}</td>
+
+              <td>
+                <span class="blood-group-badge">{{ donor.blood_group }}</span>
+              </td>
+
+              <td>{{ donor.city }}</td>
+
+              <td>
+                <a href="tel:{{ donor.phone }}">{{ donor.phone }}</a>
+              </td>
+
+              <!-- Status pill: green if available, gray if not -->
+              <td>
+                <span class="status-label
+                  {% if donor.available %}status-green{% else %}status-gray{% endif %}"
+                  id="status-{{ donor.id }}">
+                  {{ 'Available' if donor.available else 'Unavailable' }}
+                </span>
+              </td>
+
+              <!-- Toggle button: calls toggleDonor() in ui.js -->
+              <td>
+                <button
+                  class="toggle-btn"
+                  onclick="toggleDonor({{ donor.id }}, this)">
+                  {{ 'Deactivate' if donor.available else 'Activate' }}
+                </button>
+              </td>
+
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div><!-- end table-scroll -->
+
+      {% else %}
+        <!-- Shown when no donors exist yet -->
+        <div class="no-donors-box">
+          <div class="big-icon">📋</div>
+          <h3>No donors registered yet.</h3>
+          <a href="/register" class="btn btn-outline">Add First Donor</a>
+        </div>
+      {% endif %}
+
+    </div><!-- end table-section -->
+
+  </main>
+
+
+  <!-- ================================================
+       FOOTER
+       ================================================ -->
+  <footer class="page-footer">
+    <p>BloodConnect © 2024 — Student Project | Built with Flask + MySQL</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+
+</body>
+</html>
