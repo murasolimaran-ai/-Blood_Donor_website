@@ -26,7 +26,7 @@ https://github.com/murasolimaran-ai/blood-donor-finder
 ### 🏠 Home Page
 
 <p align="center">
-<img src="images/home.png" width="900">
+<img src="image/home.png" width="900">
 </p>
 
 ---
@@ -34,7 +34,7 @@ https://github.com/murasolimaran-ai/blood-donor-finder
 ### 🩸 Donor Registration
 
 <p align="center">
-<img src="images/register.png" width="900">
+<img src="image/register.png" width="900">
 </p>
 
 ---
@@ -42,7 +42,7 @@ https://github.com/murasolimaran-ai/blood-donor-finder
 ### 🔍 Blood Search
 
 <p align="center">
-<img src="images/search.png" width="900">
+<img src="image/search.png" width="900">
 </p>
 
 ---
@@ -50,22 +50,18 @@ https://github.com/murasolimaran-ai/blood-donor-finder
 ### 📊 Admin Dashboard
 
 <p align="center">
-<img src="images/admin.png" width="900">
+<img src="image/admin.png" width="900">
 </p>
 
 ---
 
 <p align="center">
-<img src="images/admin1.png" width="900">
+<img src="image/admin1.png" width="900">
 </p>
 
 ---
 
-## 🎥 Demo Video
 
-https://youtu.be/your-demo-video
-
----
 
 # 📖 Project Overview
 
